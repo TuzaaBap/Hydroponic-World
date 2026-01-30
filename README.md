@@ -1,24 +1,20 @@
-
-
-
 # Hydroponic World 🌱
 
-Hydroponic World is a smart hydroponics monitoring and automation project developed for the VIOS Hackathon.
+Hydroponic World is an IoT-based hydroponics monitoring and automation system developed for the VIOS Hackathon.
 
-## Features
-- Real-time sensor monitoring (pH, TDS, temperature, humidity)
-- Automated control system
-- AI-based growth and decision support
-- Web-based dashboard
+## What it does
+- Live monitoring of key parameters (pH, TDS, temperature, humidity, etc.)
+- Automation using relay-based control (e.g., pumps/valves)
+- Real-time dashboard view (web-based)
 
 ## Tech Stack
 - Raspberry Pi / ESP32
-- Python / Flask
-- MQTT
-- Sensors (pH, TDS, DHT, etc.)
+- MQTT (optional)
+- Python + Flask (or your stack)
+- Sensors: pH, TDS, DHTxx, CO₂, etc.
 
-## Purpose
-This project aims to improve efficiency and sustainability in hydroponic farming using IoT and AI.
+## Project Goal
+Build a reliable, low-cost hydroponic system with real-time visibility and basic automation for stable plant growth.
 
 ## Team
-Developed as part of the VIOS Hackathon.
+Built for VIOS Hackathon.
