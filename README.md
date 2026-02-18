@@ -297,8 +297,9 @@ http://127.0.0.1:5000
 
 Supports:
 
-- NFT systems
-- DWC systems
+- Nutrient film technique systems
+- Aeroponics tower
+- Deep water culture systems
 - Tower vertical farming
 - Indoor grow racks
 
