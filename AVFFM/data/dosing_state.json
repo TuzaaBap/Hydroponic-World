@@ -1,0 +1,1 @@
+{"enabled": true, "now": "2026-02-18T18:56:38", "next_tick": "2026-02-18T20:00:00", "seconds_to_next_tick": 3801, "last_tick": "2026-02-18T15:59:59", "ph": 5.82, "tds": 36.48, "action": "TDS_UP", "dose_seconds": 30, "status": "DONE", "last_done": "2026-02-18T16:00:29", "note": "Auto: TDS_UP (30s)", "day": "2026-02-18", "actions_today": 5, "max_actions_per_day": 7}

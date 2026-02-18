@@ -1,0 +1,1 @@
+{"enabled": true, "mode": "SCHEDULE", "brightness": 1.0, "target_680_pct": 55.0, "schedule": {"on": "06:00", "off": "22:00"}, "manual_on": true, "status": "ON", "note": "schedule 06:00-22:00", "updated_at": "2026-02-18T19:50:00", "last_tick": "2026-02-18T19:50:00"}

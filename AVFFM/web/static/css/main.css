@@ -1,0 +1,220 @@
+/* 🔷 Base Styling */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: url('../img/camera.jpg') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  padding: 2rem;
+  color: #1f2937;
+}
+
+h1 { color: #eaf6ff; text-shadow: 0 0 10px rgba(0,255,255,0.2); }
+
+/* 🔷 Section Title + updated pill */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 1rem 0 0.5rem;
+  color: #e6fbff;
+}
+.updated-pill{
+  display:inline-block;
+  font-weight:600;
+  font-size:0.85rem;
+  padding:0.15rem 0.5rem;
+  margin-left:0.5rem;
+  border-radius:999px;
+  background: rgba(0, 255, 255, 0.12);
+  border:1px solid rgba(0, 255, 255, 0.35);
+  color:#bffcff;
+}
+
+/* 🔷 Grid Layout */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+.grid .card { animation-delay: calc(var(--i, 0) * 100ms); }
+
+/* 🔷 Card Style */
+.card {
+  background: rgba(6, 20, 35, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(0, 255, 255, 0.22);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 0 0 1px rgba(255,255,255,0.02);
+  animation: cardEnter 0.6s ease both;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  cursor: pointer;
+}
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.45);
+  border-color: rgba(0,255,255,0.45);
+}
+
+.card h3 { color: #d8faff; margin: 0 0 0.35rem; font-weight: 700; }
+
+/* Special look for weather cards */
+.card.weather {
+  background: rgba(0, 255, 255, 0.06);
+  border: 1px solid #00f7ff80;
+}
+
+/* 🔷 Value Numbers (badge ready) */
+.value {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+  color: #e9f8ff;
+}
+
+/* Badge style for colorized metrics (pH, TDS, CO2) */
+.badge{
+  display: inline-block;
+  padding: 0.4rem 0.6rem;
+  border-radius: 0.6rem;
+  line-height: 1;
+  background: rgba(255,255,255,0.06);
+  color: #e9f8ff;
+  border: 1px solid rgba(255,255,255,0.12);
+  transition: background-color 250ms ease, color 250ms ease, transform 120ms ease, box-shadow 250ms ease, border-color 250ms ease;
+}
+
+/* ✅ Badge status colors (for dosing status / actions) */
+.badge.ok{
+  background: rgba(0, 255, 160, 0.14);
+  border-color: rgba(0, 255, 160, 0.32);
+  box-shadow: 0 0 10px rgba(0, 255, 160, 0.18);
+}
+.badge.warn{
+  background: rgba(255, 170, 0, 0.15);
+  border-color: rgba(255, 170, 0, 0.35);
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.18);
+}
+.badge.danger{
+  background: rgba(255, 60, 60, 0.14);
+  border-color: rgba(255, 60, 60, 0.33);
+  box-shadow: 0 0 10px rgba(255, 60, 60, 0.18);
+}
+.badge.muted{
+  opacity: 0.75;
+}
+
+/* ✅ Make badges usable as buttons */
+.badge.button{
+  cursor: pointer;
+  user-select: none;
+}
+.badge.button:hover{
+  transform: translateY(-1px);
+  background: rgba(0,255,200,0.16);
+  border-color: rgba(0,255,200,0.42);
+  box-shadow: 0 0 12px rgba(0,255,200,0.25);
+}
+.badge.button:active{
+  transform: translateY(0px) scale(0.98);
+  box-shadow: 0 0 0 rgba(0,0,0,0);
+}
+
+/* pulse when value changes */
+.badge.changed{
+  animation: pulse 650ms ease;
+}
+@keyframes pulse{
+  0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,255,255,0); }
+  40%{ transform: scale(1.03); box-shadow: 0 0 12px rgba(0,255,255,0.35);}
+  100%{ transform: scale(1); box-shadow: 0 0 0 rgba(0,255,255,0); }
+}
+
+/* 🔷 Camera frame */
+.camera-feed{
+  margin-top: 2rem;
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+}
+.camera-frame{
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+  opacity: 0;
+  background: rgba(0,0,0,0.2);
+  border-radius: 1rem;
+  border: 1px solid rgba(0,255,255,0.25);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  transition: opacity 500ms ease;
+}
+.camera-frame.show{ opacity: 1; }
+
+/* ================= FOOTER ================= */
+.avffm-footer{
+  position: static;      /* IMPORTANT: not fixed */
+  width: 100%;
+  margin-top: 22px;
+  padding: 18px 0 24px 0;
+
+  display: flex;
+  justify-content: flex-start;  /* left */
+}
+
+.footer-content{
+  margin-left: 20px;     /* bottom-left */
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.footer-logo{
+  height: 70px;          /* 50% bigger */
+  width: auto;
+  object-fit: contain;
+}
+
+.footer-text{
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  text-shadow: 0 0 8px rgba(0,0,0,0.6);
+}
+
+.heart{ color: #ff3b3b; }
+
+/* 🌈 Enter animation */
+@keyframes cardEnter {
+  0% { opacity: 0; transform: translateY(8px); }
+  100%{ opacity: 1; transform: translateY(0); }
+}
+
+/* 📱 Mobile Optimization */
+@media (max-width: 768px) {
+  .grid { grid-template-columns: 1fr; }
+  body { padding: 1rem; }
+}
+
+/* 🔁 Preloader */
+#preloader {
+  position: fixed;
+  inset: 0;
+  background: black;
+  z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  opacity: 1; transition: opacity 1s ease-in-out;
+}
+.bt-spinner{ position: relative; width: 100px; height: 100px; margin-bottom: 2rem; }
+.bt-spinner div {
+  position: absolute; border: 5px solid transparent; border-radius: 50%;
+  animation: spin 1.2s linear infinite;
+}
+.bt-spinner .circle1{ border-top: 5px solid red;    width:100px; height:100px; top:0; left:0;}
+.bt-spinner .circle2{ border-top: 5px solid orange; width:75px;  height:75px;  top:12.5px; left:12.5px; animation-delay:-0.4s;}
+.bt-spinner .circle3{ border-top: 5px solid yellow; width:50px;  height:50px;  top:25px;  left:25px;  animation-delay:-0.8s;}
+@keyframes spin { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+#preloader-text{
+  color:#FFFFFF; font-size:1.8rem; text-align:center; line-height:2.4rem; font-weight:bold;
+  animation: fadeOutText 0.8s ease-out 3s forwards;
+}
+@keyframes fadeOutText { to { opacity: 0; transform: translateY(-10px); } }

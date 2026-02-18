@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AVFFM Dashboard</title>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='img/favicon.png') }}">
+</head>
+
+<body>
+  <!-- Preloader -->
+  <div id="preloader">
+    <div class="bt-spinner">
+      <div class="circle1"></div>
+      <div class="circle2"></div>
+      <div class="circle3"></div>
+    </div>
+    <div id="preloader-text">
+      Please Wait<br>
+      We welcome you to the Future of Hydrophonics
+    </div>
+  </div>
+
+  <h1>AVFFM Dashboard</h1>
+
+  <!-- ================= SENSOR PARAMETERS ================= -->
+  <div class="section-title">
+    Sensor Parameters
+    <span id="sensor-updated" class="updated-pill">—</span>
+  </div>
+
+  <!-- ORDER: pH, TDS, Water Temp, DHT Temp, DHT Humidity, then Wavelengths -->
+  <div class="grid" id="sensor-cards">
+    <div class="card"><h3>🧪 pH Value</h3><div id="ph" class="value badge">--</div></div>
+    <div class="card"><h3>🌊 TDS Value (ppm)</h3><div id="tds" class="value badge">--</div></div>
+    <div class="card"><h3>🌡️ Water Temp (°C)</h3><div id="water-temp" class="value badge">--</div></div>
+    <div class="card"><h3>🌡️ DHT Temp (°C)</h3><div id="dht-temp" class="value badge">--</div></div>
+    <div class="card"><h3>🌧️ DHT Humidity (%)</h3><div id="dht-humidity" class="value badge">--</div></div>
+
+    <div class="card"><h3>☀️ 415nm % UV Light</h3><div id="w-415" class="value">--</div></div>
+    <div class="card"><h3>☀️ 445nm % Blue Growth</h3><div id="w-445" class="value">--</div></div>
+    <div class="card"><h3>☀️ 480nm % Leaf Boost</h3><div id="w-480" class="value">--</div></div>
+    <div class="card"><h3>☀️ 515nm % Green Neutral</h3><div id="w-515" class="value">--</div></div>
+    <div class="card"><h3>☀️ 555nm % Eye Bright</h3><div id="w-555" class="value">--</div></div>
+    <div class="card"><h3>☀️ 590nm % Warm Orange</h3><div id="w-590" class="value">--</div></div>
+    <div class="card"><h3>☀️ 630nm % Red Bloom</h3><div id="w-630" class="value">--</div></div>
+    <div class="card"><h3>☀️ 680nm % Photosynthesis</h3><div id="w-680" class="value">--</div></div>
+  </div>
+
+  <!-- ================= WEATHER ================= -->
+  <div class="section-title">Weather</div>
+
+  <div class="grid" id="weather-cards">
+    <div class="card weather"><h3>🌡️ Temperature (°C)</h3><div id="weather-temp" class="value">--</div></div>
+    <div class="card weather"><h3>💧 Humidity (%)</h3><div id="weather-humidity" class="value">--</div></div>
+    <div class="card weather"><h3>🌬️ Wind</h3><div id="weather-wind" class="value">--</div></div>
+    <div class="card weather"><h3>📊 Pressure (hPa)</h3><div id="weather-pressure" class="value">--</div></div>
+    <div class="card weather"><h3>🌫️ Visibility (m)</h3><div id="weather-visibility" class="value">--</div></div>
+    <div class="card weather"><h3>🌥️ Condition</h3><div id="weather-condition" class="value">--</div></div>
+    <div class="card weather"><h3>🌡️ Feels Like (°C)</h3><div id="weather-feels" class="value">--</div></div>
+    <div class="card weather"><h3>☁️ Cloud Cover (%)</h3><div id="weather-clouds" class="value">--</div></div>
+    <div class="card weather"><h3>🌅 Sunrise/Sunset</h3><div id="weather-sun" class="value">--</div></div>
+  </div>
+<!-- ================= AUTODOSING + GROWLIGHT ================= -->
+<div class="section-title">Autodosing [&] Growlight</div>
+
+<div class="grid" id="dose_grid">
+  <div class="card" style="--i: 1">
+    <h3>Last Action</h3>
+    <div style="margin-top:0.6rem;">
+      <span class="badge" id="dose_last_action" style="font-size:1.05rem;font-weight:800;">--</span>
+    </div>
+    <div style="margin-top:0.6rem;color:#bffcff;opacity:0.85;line-height:1.2;">
+      Last Done:<br>
+      <span id="dose_last_done">--</span>
+    </div>
+  </div>
+
+  <div class="card" style="--i: 2">
+    <h3>Next Scheduled Tick</h3>
+    <div style="margin-top:0.6rem;">
+      <span class="badge" id="dose_next_tick" style="font-size:1.05rem;font-weight:800;">--</span>
+    </div>
+    <div style="margin-top:0.6rem;color:#bffcff;opacity:0.85;">
+      In: <span id="dose_next_in">--</span>
+    </div>
+  </div>
+
+  <div class="card" style="--i: 3">
+    <h3>Status</h3>
+    <div style="margin-top:0.6rem;">
+      <span class="badge" id="dose_status" style="font-size:1.05rem;font-weight:800;">--</span>
+    </div>
+    <div style="margin-top:0.6rem;color:#bffcff;opacity:0.85;">
+      Today: <span id="dose_today">--</span> / <span id="dose_max">--</span>
+    </div>
+  </div>
+
+  <div class="card" style="--i: 4">
+    <h3>Manual Dosing</h3>
+
+    <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.6rem;">
+      <button class="badge" style="cursor:pointer;" onclick="manualDose('/dose/ph_up')">Dose pH UP (10 ml)</button>
+      <button class="badge" style="cursor:pointer;" onclick="manualDose('/dose/ph_down')">Dose pH DOWN (10 ml)</button>
+      <button class="badge" style="cursor:pointer;" onclick="manualDose('/dose/tds_up')">Dose TDS UP (10 ml)</button>
+    </div>
+
+    <div style="margin-top:0.6rem;opacity:0.75;color:#bffcff;font-size:0.9rem;">
+      Calibration: 10 ml = 30 seconds pump runtime
+    </div>
+
+    <div style="margin-top:0.8rem;color:#bffcff;opacity:0.9;" id="dose_msg">--</div>
+  </div>
+
+  <div class="card" style="--i: 5">
+    <h3>Growlight</h3>
+
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.7rem;">
+      <button class="badge" style="cursor:pointer;" onclick="growManual(true)">ON</button>
+      <button class="badge" style="cursor:pointer;" onclick="growManual(false)">OFF</button>
+      <button class="badge" style="cursor:pointer;" onclick="growMode('SCHEDULE')">Schedule</button>
+      <button class="badge" style="cursor:pointer;" onclick="growMode('SENSOR')">Sensor</button>
+    </div>
+
+    <div style="margin-top:0.7rem;color:#bffcff;opacity:0.9;" id="grow_msg">--</div>
+  </div>
+</div>
+
+  <!-- ================= MAINTENANCE ================= -->
+  <div class="section-title">Maintenance</div>
+
+  <div class="grid" id="maint_grid">
+    <div class="card" style="--i: 1">
+      <h3>Clean Sensors</h3>
+      <div class="value"><span class="badge" id="maint_sensor_days">--</span></div>
+      <div style="margin-top:0.5rem;color:#bffcff;opacity:0.85;">Due: <span id="maint_sensor_due">--</span></div>
+      <div style="margin-top:0.6rem;">
+        <button class="badge" style="cursor:pointer;" onclick="resetMaintenance('sensor_clean')">Reset</button>
+      </div>
+    </div>
+
+    <div class="card" style="--i: 2">
+      <h3>Water Change</h3>
+      <div class="value"><span class="badge" id="maint_water_days">--</span></div>
+      <div style="margin-top:0.5rem;color:#bffcff;opacity:0.85;">Due: <span id="maint_water_due">--</span></div>
+      <div style="margin-top:0.6rem;">
+        <button class="badge" style="cursor:pointer;" onclick="resetMaintenance('water_change')">Reset</button>
+      </div>
+    </div>
+
+    <div class="card" style="--i: 3">
+      <h3>Clean Tank</h3>
+      <div class="value"><span class="badge" id="maint_tank_days">--</span></div>
+      <div style="margin-top:0.5rem;color:#bffcff;opacity:0.85;">Due: <span id="maint_tank_due">--</span></div>
+      <div style="margin-top:0.6rem;">
+        <button class="badge" style="cursor:pointer;" onclick="resetMaintenance('tank_clean')">Reset</button>
+      </div>
+    </div>
+
+    <div class="card" style="--i: 4">
+      <h3>Restart Pi3</h3>
+      <div style="margin-top:0.5rem;color:#bffcff;opacity:0.85;line-height:1.2;">
+        Last restart:<br>
+        <span id="maint_last_restart">--</span>
+      </div>
+      <div style="margin-top:0.8rem;">
+        <button class="badge" style="cursor:pointer;" onclick="confirmRestartPi()">Restart</button>
+      </div>
+      <div style="margin-top:0.8rem;color:#bffcff;opacity:0.9;" id="maint_msg">--</div>
+    </div>
+  </div>
+
+  <!-- ================= SYSTEM METRICS ================= -->
+  <div class="section-title">System Metrics</div>
+
+  <div class="grid" id="system-cards">
+    <div class="card"><h3>🧠 CPU Usage (%)</h3><div id="cpu-usage" class="value">--</div></div>
+    <div class="card"><h3>🌡️ CPU Temp (°C)</h3><div id="cpu-temp" class="value">--</div></div>
+    <div class="card"><h3>🧵 RAM Usage (%)</h3><div id="ram-usage" class="value">--</div></div>
+    <div class="card"><h3>📦 RAM Used</h3><div id="ram-used" class="value">--</div></div>
+    <div class="card"><h3>💽 Storage Usage (%)</h3><div id="storage-usage" class="value">--</div></div>
+    <div class="card"><h3>🗂️ Storage Used</h3><div id="storage-used" class="value">--</div></div>
+  </div>
+
+  <!-- ================= CAMERA ================= -->
+  <div class="section-title">Camera Feed</div>
+  <div class="camera-feed">
+    <img id="cameraStream" class="camera-frame" alt="Camera Feed" loading="lazy">
+  </div>
+
+  <script>
+    // =========================
+    // Helpers
+    // =========================
+    const $ = (id) => document.getElementById(id);
+
+    const fmt = (v, suffix='') => {
+      if (v === undefined || v === null) return '--';
+      const n = Number(v);
+      if (Number.isNaN(n)) return `${v}${suffix}`; // allow strings
+      return `${n}${suffix}`;
+    };
+
+    function nowStr() {
+      return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    }
+
+    function updateCardValue(id, newValue) {
+      const el = $(id);
+      if (el) el.innerText = (newValue === undefined || newValue === null || newValue === "") ? "--" : String(newValue);
+    }
+
+    function formatTime(unixTime) {
+      if (!unixTime) return '--';
+      const d = new Date(Number(unixTime) * 1000);
+      if (Number.isNaN(d.getTime())) return '--';
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatDateTwoLine(iso){
+      if (!iso) return "--";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso);
+      const time = d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+      const date = d.toLocaleDateString('en-GB').replace(/\//g,'-');
+      return `${time}\n${date}`;
+    }
+
+    function formatDateOneLine(iso){
+      if (!iso) return "--";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso);
+      return d.toLocaleString('en-GB');
+    }
+
+    function secondsToHMS(sec){
+      if (sec === undefined || sec === null) return "--";
+      sec = Math.max(0, parseInt(sec, 10) || 0);
+      const h = Math.floor(sec / 3600);
+      const m = Math.floor((sec % 3600) / 60);
+      const s = sec % 60;
+      return `${h}h ${m}m ${s}s`;
+    }
+
+    function pad2(n){
+      const x = parseInt(n,10);
+      if (Number.isNaN(x)) return "--";
+      return String(x).padStart(2,'0');
+    }
+
+    function setBadgeText(id, text){
+      const el = $(id);
+      if (!el) return;
+      const prev = el.textContent;
+      el.textContent = (text === undefined || text === null || text === "") ? "--" : String(text);
+      if (prev !== el.textContent){
+        el.classList.remove("changed");
+        void el.offsetWidth;
+        el.classList.add("changed");
+      }
+    }
+
+    // =========================
+    // Dosing UI
+    // =========================
+    let nextTickMs = null;
+
+    function applyDoseStatusColor(status){
+      const el = $("dose_status");
+      if (!el) return;
+
+      el.style.removeProperty("background-color");
+      el.style.removeProperty("color");
+
+      const st = String(status || "").toUpperCase();
+      const map = {
+        "DONE":         { bg: "rgba(0, 200, 120, 0.35)", fg: "#eafff6" },
+        "DOSING":       { bg: "rgba(255, 170, 0, 0.35)", fg: "#fff7e6" },
+        "DAILY_LIMIT":  { bg: "rgba(255, 60, 60, 0.38)", fg: "#ffecec" },
+        "DISABLED":     { bg: "rgba(180, 180, 180, 0.22)", fg: "#f1f5f9" },
+        "SKIPPED":      { bg: "rgba(0, 180, 170, 0.28)", fg: "#e6fffd" },
+        "MANUAL":       { bg: "rgba(120, 160, 255, 0.30)", fg: "#eef4ff" },
+        "MANUAL_DOSING":{ bg: "rgba(120, 160, 255, 0.30)", fg: "#eef4ff" }
+      };
+      const c = map[st];
+      if (c){
+        el.style.backgroundColor = c.bg;
+        el.style.color = c.fg;
+      }
+    }
+
+    function updateCountdownUI(){
+      const el = $("dose_next_in");
+      if (!el) return;
+
+      if (!nextTickMs){
+        el.textContent = "--";
+        return;
+      }
+      const diffSec = Math.max(0, Math.floor((nextTickMs - Date.now()) / 1000));
+      el.textContent = secondsToHMS(diffSec);
+    }
+    setInterval(updateCountdownUI, 1000);
+
+    function updateDosingUI(d){
+      setBadgeText("dose_last_action", d?.action || "--");
+
+      const lastDoneEl = $("dose_last_done");
+      if (lastDoneEl){
+        lastDoneEl.textContent = formatDateTwoLine(d?.last_done);
+        lastDoneEl.style.whiteSpace = "pre-line";
+      }
+
+      if (d?.next_tick){
+        const dt = new Date(d.next_tick);
+        if (!Number.isNaN(dt.getTime())){
+          nextTickMs = dt.getTime();
+          setBadgeText("dose_next_tick", formatDateOneLine(d.next_tick));
+        } else {
+          nextTickMs = null;
+          setBadgeText("dose_next_tick", String(d.next_tick));
+        }
+      } else {
+        nextTickMs = null;
+        setBadgeText("dose_next_tick", "--");
+      }
+      updateCountdownUI();
+
+      setBadgeText("dose_status", d?.status || "--");
+      applyDoseStatusColor(d?.status);
+
+      const today = (d?.actions_today !== undefined && d?.actions_today !== null) ? d.actions_today : null;
+      const max   = (d?.max_actions_per_day !== undefined && d?.max_actions_per_day !== null) ? d.max_actions_per_day : null;
+      if ($("dose_today")) $("dose_today").textContent = (today === null) ? "--" : pad2(today);
+      if ($("dose_max"))   $("dose_max").textContent   = (max === null) ? "--" : pad2(max);
+
+      const msg = $("dose_msg");
+      if (msg) msg.textContent = d?.note ? d.note : "--";
+    }
+
+    async function manualDose(url){
+      const msg = $("dose_msg");
+      if (msg) msg.textContent = "Dosing...";
+
+      setBadgeText("dose_status", "MANUAL_DOSING");
+      applyDoseStatusColor("MANUAL_DOSING");
+
+      try{
+        const r = await fetch(url, { method: "POST" });
+        const j = await r.json().catch(()=>null);
+
+        if (j && j.ok){
+          if (msg) msg.textContent = `✅ Manual: ${j.action} (${j.seconds}s)`;
+        } else {
+          if (msg) msg.textContent = "❌ Failed";
+        }
+      }catch(e){
+        if (msg) msg.textContent = "❌ Error calling dose route";
+      }
+      await loadData(); // refresh
+    }
+
+    // =========================
+    // Growlight UI + Actions (matches your Flask routes)
+    // Routes used:
+    //  - POST /growlight/manual  { on: true/false }
+    //  - POST /growlight/mode    { mode: "SCHEDULE"|"SENSOR"|"MANUAL" }
+    //  - (schedule/target endpoints exist but kept minimal in UI)
+    // =========================
+function updateGrowlightUI(g){
+  if (!g || typeof g !== "object") return;
+
+  const enabled = !!g.enabled;
+
+  const mode = String(g.mode ?? "").trim().toUpperCase();
+  const status = String(g.status ?? "").trim().toUpperCase(); // "ON" / "OFF"
+  const powerText = (enabled && status === "ON") ? "ON" : "OFF";
+
+  const onT  = String(g?.schedule?.on  || "--");
+  const offT = String(g?.schedule?.off || "--");
+
+  // ✅ THIS is what will be shown under the buttons (your grow_msg line)
+  let line = "--";
+
+if (!enabled) {
+  line = "off";
+  } else if (mode === "MANUAL") {
+    line = (powerText === "ON") ? "manual on" : "manual off";
+  } else if (mode === "SCHEDULE") {
+    line = `schedule ${onT}-${offT}`;
+  } else if (mode === "SENSOR") {
+    // if you want, keep sensor details only if they exist
+    line = "sensor";
+  } else {
+    line = mode ? mode.toLowerCase() : "--";
+  }
+
+  // Optional: if you still have these pills in HTML, update them too
+  const p = document.getElementById("grow_power");
+  const m = document.getElementById("grow_mode");
+  if (p) p.textContent = powerText;
+  if (m) m.textContent = (!enabled) ? "disabled" : mode.toLowerCase();
+
+  const msg = document.getElementById("grow_msg");
+  if (msg) msg.textContent = line;
+}
+
+    async function growMode(mode){
+      try{
+        const r = await fetch("/growlight/mode", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ mode })
+        });
+        const j = await r.json().catch(()=>null);
+        if (j?.ok) {
+          updateGrowlightUI(j.growlight);
+        } else {
+          const msg = $("grow_msg");
+          if (msg) msg.textContent = "❌ Mode change failed";
+        }
+      }catch(e){
+        const msg = $("grow_msg");
+        if (msg) msg.textContent = "❌ Network error";
+      }
+      await loadData();
+    }
+
+    async function growManual(on){
+      // IMPORTANT: we force MANUAL mode when user presses ON/OFF
+      try{
+        const r = await fetch("/growlight/manual", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({ on: !!on })
+        });
+        const j = await r.json().catch(()=>null);
+        if (j?.ok) {
+          updateGrowlightUI(j.growlight);
+        } else {
+          const msg = $("grow_msg");
+          if (msg) msg.textContent = "❌ ON/OFF failed";
+        }
+      }catch(e){
+        const msg = $("grow_msg");
+        if (msg) msg.textContent = "❌ Network error";
+      }
+      await loadData();
+    }
+
+    // =========================
+    // Maintenance UI
+    // =========================
+    function formatDateOnly(iso){
+      if(!iso) return "--";
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return String(iso);
+      return d.toLocaleDateString('en-GB').replace(/\//g,'-');
+    }
+
+    function setMaint(daysId, dueId, obj){
+      const badge = $(daysId);
+      const dueEl = $(dueId);
+      if (!badge || !dueEl || !obj) return;
+
+      const daysLeft = Number(obj.days_left);
+      if (!Number.isFinite(daysLeft)){
+        badge.textContent = "--";
+      } else if (daysLeft < 0){
+        badge.textContent = "OVERDUE";
+      } else {
+        badge.textContent = `${daysLeft} days`;
+      }
+
+      dueEl.textContent = formatDateOnly(obj.due_date);
+    }
+
+    function updateMaintenanceUI(m){
+      if(!m) return;
+
+      setMaint("maint_water_days",  "maint_water_due",  m.water_change);
+      setMaint("maint_sensor_days", "maint_sensor_due", m.sensor_clean);
+      setMaint("maint_tank_days",   "maint_tank_due",   m.tank_clean);
+
+      const lastR = $("maint_last_restart");
+      if (lastR){
+        lastR.textContent = formatDateTwoLine(m.last_restart);
+        lastR.style.whiteSpace = "pre-line";
+      }
+    }
+
+    async function resetMaintenance(item){
+      if(!confirm("Are you sure you completed this maintenance?")) return;
+
+      try{
+        const r = await fetch(`/maintenance/reset/${item}`, { method: "POST" });
+        const j = await r.json().catch(()=>null);
+        const mm = $("maint_msg");
+
+        if (j && j.ok){
+          updateMaintenanceUI(j.maintenance || {});
+          if (mm) mm.textContent = "✅ Reset done";
+        } else {
+          if (mm) mm.textContent = "❌ Reset failed";
+        }
+      }catch(e){
+        const mm = $("maint_msg");
+        if (mm) mm.textContent = "❌ Reset error";
+      }
+    }
+
+    async function confirmRestartPi(){
+      if(!confirm("Are you sure you want to restart Pi3?")) return;
+
+      const pw = prompt("Enter Pi3 password to restart:");
+      if(!pw) return;
+
+      const mm = $("maint_msg");
+      if (mm) mm.textContent = "Restarting...";
+
+      try{
+        const r = await fetch("/maintenance/restart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pw })
+        });
+        const j = await r.json().catch(()=>null);
+
+        if (j && j.ok){
+          if (mm) mm.textContent = "✅ Restart command sent";
+        } else {
+          if (mm) mm.textContent = "❌ " + (j?.error || "Restart failed");
+        }
+      }catch(e){
+        if (mm) mm.textContent = "❌ Restart request failed";
+      }
+    }
+
+    // =========================
+    // Color utils (Sensor badges)
+    // =========================
+    const lerp = (a,b,t)=>a+(b-a)*t;
+    function interpColor([r1,g1,b1],[r2,g2,b2],t){
+      return [Math.round(lerp(r1,r2,t)), Math.round(lerp(g1,g2,t)), Math.round(lerp(b1,b2,t))];
+    }
+    function rgbToCss([r,g,b]){ return `rgb(${r}, ${g}, ${b})`; }
+    function luminance([r,g,b]){
+      const a=[r,g,b].map(v=>{v/=255;return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4);});
+      return 0.2126*a[0]+0.7152*a[1]+0.0722*a[2];
+    }
+    function gradientColor(value, stops){
+      if (value===undefined || value===null || Number.isNaN(value)) return null;
+      if (value <= stops[0].v) return stops[0].color;
+      if (value >= stops[stops.length-1].v) return stops[stops.length-1].color;
+      for (let i=0;i<stops.length-1;i++){
+        const a=stops[i], b=stops[i+1];
+        if (value >= a.v && value <= b.v){
+          const t = (value - a.v) / (b.v - a.v);
+          return interpColor(a.color, b.color, t);
+        }
+      }
+      return stops[stops.length-1].color;
+    }
+    function setBadgeColor(el, value, stops, textPrefix='', textSuffix=''){
+      if (!el) return;
+      if (value===undefined || value===null || Number.isNaN(value)){
+        el.textContent = '--';
+        el.style.removeProperty('background-color');
+        el.style.removeProperty('color');
+        return;
+      }
+      const color = gradientColor(value, stops);
+      if (color){
+        const css = rgbToCss(color);
+        const isDark = luminance(color) < 0.5;
+        el.style.backgroundColor = css;
+        el.style.color = isDark ? 'white' : '#0b1220';
+      }
+      el.textContent = `${textPrefix}${value}${textSuffix}`;
+    }
+
+    const PH_STOPS = [
+      { v: 4.0, color: [255, 0, 0] },
+      { v: 7.0, color: [255, 255, 255] },
+      { v: 9.0, color: [0, 120, 255] }
+    ];
+    const TDS_STOPS = [
+      { v: 100, color: [255, 255, 255] },
+      { v: 400, color: [144, 238, 144] },
+      { v: 900, color: [0, 128, 0] }
+    ];
+    const WATER_TEMP_STOPS = [
+      { v: 10, color: [0, 120, 255] },
+      { v: 18, color: [135, 206, 250] },
+      { v: 22, color: [144, 238, 144] },
+      { v: 28, color: [255, 160, 160] },
+      { v: 35, color: [255, 0, 0] }
+    ];
+    const DHT_TEMP_STOPS = [
+      { v: 16, color: [0, 120, 255] },
+      { v: 20, color: [135, 206, 250] },
+      { v: 24, color: [144, 238, 144] },
+      { v: 30, color: [255, 160, 160] },
+      { v: 35, color: [255, 0, 0] }
+    ];
+    const HUMIDITY_STOPS = [
+      { v: 30, color: [0, 120, 255] },
+      { v: 40, color: [135, 206, 250] },
+      { v: 50, color: [0, 180, 170] },
+      { v: 60, color: [255, 160, 160] },
+      { v: 80, color: [255, 0, 0] }
+    ];
+
+    // =========================
+    // Main poll (single source of truth, no duplicate code)
+    // =========================
+    let _loading = false;
+
+    async function loadData() {
+      if (_loading) return; // prevent overlaps if network is slow
+      _loading = true;
+
+      try {
+        const res = await fetch('/data', { cache: 'no-store' });
+
+        // If server returns non-JSON / error, don't break the page
+        if (!res.ok) {
+          console.warn("GET /data failed:", res.status);
+          return;
+        }
+
+        const payload = await res.json().catch(() => null);
+        if (!payload || typeof payload !== "object") {
+          console.warn("Bad JSON payload from /data");
+          return;
+        }
+
+        const sensors = payload.sensors || {};
+        const weather = payload.weather || {};
+        const dosing  = payload.dosing  || {};
+        const maintenance = payload.maintenance || {};
+        const growlight = payload.growlight || {};
+
+        // time ping ONLY for sensor section
+        const pill = $("sensor-updated");
+        if (pill) pill.textContent = nowStr();
+
+        // ---- Sensors ----
+        const phVal      = Number(sensors?.ph);
+        const tdsVal     = Number(sensors?.tds);
+        const waterTemp  = Number(sensors?.water_temp);
+        const dhtTemp    = Number(sensors?.dht?.temp);
+        const dhtHum     = Number(sensors?.dht?.humidity);
+
+        setBadgeColor($("ph"), phVal, PH_STOPS);
+        setBadgeColor($("tds"), tdsVal, TDS_STOPS, '', ' ppm');
+        setBadgeColor($("water-temp"), waterTemp, WATER_TEMP_STOPS, '', '°C');
+        setBadgeColor($("dht-temp"), dhtTemp, DHT_TEMP_STOPS, '', '°C');
+        setBadgeColor($("dht-humidity"), dhtHum, HUMIDITY_STOPS, '', '%');
+
+        ["415","445","480","515","555","590","630","680"].forEach(w => {
+          updateCardValue(`w-${w}`, fmt(sensors?.wavelength?.[w], '%'));
+        });
+
+        // ---- System metrics ----
+        updateCardValue("cpu-usage", fmt(sensors?.system?.cpu_usage, '%'));
+        updateCardValue("cpu-temp", fmt(sensors?.system?.cpu_temp, '°C'));
+        updateCardValue("ram-usage", fmt(sensors?.system?.ram?.percent, '%'));
+        updateCardValue("ram-used",
+          `${fmt(sensors?.system?.ram?.used, ' MB')} / ${fmt(sensors?.system?.ram?.total, ' MB')}`
+        );
+        updateCardValue("storage-usage", fmt(sensors?.system?.storage?.percent, '%'));
+        updateCardValue("storage-used",
+          `${fmt(sensors?.system?.storage?.used, ' GB')} / ${fmt(sensors?.system?.storage?.total, ' GB')}`
+        );
+
+        // ---- Weather ----
+        updateCardValue("weather-temp", fmt(weather?.temp, '°C'));
+        updateCardValue("weather-humidity", fmt(weather?.humidity, '%'));
+        updateCardValue("weather-wind", `${fmt(weather?.wind_speed, ' m/s')} @ ${fmt(weather?.wind_deg, '°')}`);
+        updateCardValue("weather-pressure", fmt(weather?.pressure, ' hPa'));
+        updateCardValue("weather-visibility", fmt(weather?.visibility, ' m'));
+        updateCardValue("weather-condition", weather?.condition ?? '--');
+        updateCardValue("weather-feels", fmt(weather?.feels_like, '°C'));
+        updateCardValue("weather-clouds", fmt(weather?.clouds, '%'));
+        updateCardValue("weather-sun", `${formatTime(weather?.sunrise)} / ${formatTime(weather?.sunset)}`);
+
+        // ---- Dosing + Maintenance ----
+        updateDosingUI(dosing);
+        updateMaintenanceUI(maintenance);
+
+        // ---- Growlight ----
+        updateGrowlightUI(growlight);
+
+      } catch (e) {
+        console.error('Failed to load /data:', e);
+      } finally {
+        _loading = false;
+      }
+    }
+
+    // =========================
+    // Boot
+    // =========================
+    window.addEventListener('DOMContentLoaded', () => {
+      // camera
+      setTimeout(() => {
+        const cam = $("cameraStream");
+        if (!cam) return;
+        cam.src = "{{ stream_url }}";
+        cam.addEventListener('load', () => cam.classList.add('show'));
+      }, 400);
+
+      loadData();
+      setInterval(loadData, 2000); //can adjust this interval as needed (2s is usually a good balance for real-time feel without overwhelming the server)
+    });
+
+    // Preloader fade (never hang forever)
+    window.addEventListener("load", () => {
+      setTimeout(() => {
+        const preloader = $("preloader");
+        if (!preloader) return;
+        preloader.style.opacity = "0";
+        setTimeout(() => preloader.remove(), 800);
+      }, 800);
+    });
+  </script>
+
+<!-- ================= FOOTER ================= -->
+<footer class="avffm-footer">
+  <div class="footer-content">
+    <img src="{{ url_for('static', filename='img/logo.png') }}" 
+         alt="AVFFM Logo" class="footer-logo">
+
+    <span class="footer-text">
+      Made with <span class="heart">❤️</span> by VIOS Team 73
+    </span>
+  </div>
+</footer>
+</body>
+</html>
